@@ -39,55 +39,79 @@ export function Experience({ onOpenResume }) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Clean, sequential entrance of all timeline items
-      gsap.fromTo(
-        '.editorial-timeline-item',
-        { y: 35, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.85,
-          stagger: 0.18,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%'
-          }
-        }
-      );
+      const mm = gsap.matchMedia();
 
-      // 2. Dynamic progress line that draws downward as you scroll through the section
-      gsap.fromTo(
-        '.editorial-timeline-progress-line',
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          transformOrigin: 'top center',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 65%',
-            end: 'bottom 85%',
-            scrub: 0.5
+      // Desktop: scrubbed progress line & animated marker states alongside sticky left column
+      mm.add('(min-width: 1025px)', () => {
+        gsap.fromTo(
+          '.editorial-timeline-item',
+          { y: 35, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.85,
+            stagger: 0.18,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%'
+            }
           }
-        }
-      );
+        );
 
-      // 3. Highlight marker dot as scroll passes each job
-      const items = gsap.utils.toArray('.editorial-timeline-item');
-      items.forEach((item) => {
-        const dot = item.querySelector('.editorial-marker-dot');
-        if (dot) {
-          ScrollTrigger.create({
-            trigger: item,
-            start: 'top 65%',
-            end: 'bottom 35%',
-            onEnter: () => dot.classList.add('is-active'),
-            onEnterBack: () => dot.classList.add('is-active'),
-            onLeave: () => dot.classList.remove('is-active'),
-            onLeaveBack: () => dot.classList.remove('is-active')
-          });
-        }
+        gsap.fromTo(
+          '.editorial-timeline-progress-line',
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: 'none',
+            transformOrigin: 'top center',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 65%',
+              end: 'bottom 85%',
+              scrub: 0.5
+            }
+          }
+        );
+
+        const items = gsap.utils.toArray('.editorial-timeline-item');
+        items.forEach((item) => {
+          const dot = item.querySelector('.editorial-marker-dot');
+          if (dot) {
+            ScrollTrigger.create({
+              trigger: item,
+              start: 'top 65%',
+              end: 'bottom 35%',
+              onEnter: () => dot.classList.add('is-active'),
+              onEnterBack: () => dot.classList.add('is-active'),
+              onLeave: () => dot.classList.remove('is-active'),
+              onLeaveBack: () => dot.classList.remove('is-active')
+            });
+          }
+        });
+      });
+
+      // Mobile / Tablet: Clean, natural scrolling with simple reveal, no scrub or sticky pinning
+      mm.add('(max-width: 1024px)', () => {
+        gsap.fromTo(
+          '.editorial-timeline-item',
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+
+        // Fully drawn progress line on mobile (no scrub tracking)
+        gsap.set('.editorial-timeline-progress-line', { scaleY: 1 });
       });
     }, sectionRef);
 

@@ -1050,24 +1050,38 @@
   align-items: start;
 }
 
+.experience-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Sticky left column on Desktop only */
+@media (min-width: 1025px) {
+  .experience-left {
+    position: sticky;
+    top: 6.5rem;
+    align-self: start;
+    z-index: 5;
+  }
+}
+
+/* Tablet & Mobile: Completely disable sticky behavior for natural flowing scroll */
 @media (max-width: 1024px) {
   .experience-container {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
   .experience-left {
-    position: static;
+    position: static !important;
+    top: auto !important;
+    align-self: auto !important;
+    z-index: auto !important;
   }
-}
-
-.experience-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: sticky;
-  top: 6.5rem;
-  align-self: start;
-  z-index: 5;
+  .experience-subtitle {
+    max-width: 100%;
+    margin-bottom: 1.75rem;
+  }
 }
 
 .experience-heading {
@@ -1108,7 +1122,7 @@
   position: absolute;
   top: 10px;
   bottom: 25px;
-  left: 4px;
+  left: 11.5px;
   width: 1px;
   background-color: var(--border-medium);
   z-index: 1;
@@ -1119,7 +1133,7 @@
   position: absolute;
   top: 10px;
   bottom: 25px;
-  left: 3.5px;
+  left: 11px;
   width: 2px;
   background-color: var(--text-primary);
   transform-origin: top center;
