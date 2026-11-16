@@ -1884,16 +1884,19 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 1.5rem;
+    gap: 2rem;
   }
   .footer-left {
+    order: 2;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.6rem;
     align-items: center;
+    padding-top: 0.5rem;
   }
   .footer-right {
-    flex-direction: column-reverse;
-    gap: 1.25rem;
+    order: 1;
+    flex-direction: column;
+    gap: 1.5rem;
     align-items: center;
   }
   .footer-nav-list {
@@ -1904,6 +1907,9 @@
 }
 
 @media (max-width: 480px) {
+  .footer-container {
+    gap: 1.75rem;
+  }
   .footer-copyright {
     font-size: 0.78rem;
   }
