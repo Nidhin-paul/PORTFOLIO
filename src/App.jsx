@@ -17,7 +17,6 @@ import { IntroModal } from './components/IntroModal';
 import { ResumeModal } from './components/ResumeModal';
 import { ProjectModal } from './components/ProjectModal';
 import { AllSkillsModal } from './components/AllSkillsModal';
-import { CustomCursor } from './components/CustomCursor';
 import { Preloader } from './components/Preloader';
 import { GrainOverlay } from './components/GrainOverlay';
 import { Marquee } from './components/Marquee';
@@ -126,9 +125,6 @@ export default function App() {
 
       {/* Awwwards Initial Page Preloader */}
       <Preloader />
-
-      {/* Custom Awwwards-style magnetic/expanding cursor */}
-      <CustomCursor />
 
       {/* Navigation Header */}
       <Navbar theme={theme} toggleTheme={toggleTheme} />

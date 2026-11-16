@@ -78,13 +78,6 @@ export function Navbar({ theme, toggleTheme }) {
                     className={`nav-link ${isActive ? 'active' : ''}`}
                   >
                     {link.label}
-                    {isActive && (
-                      <motion.span 
-                        className="nav-active-dot" 
-                        layoutId="activeDot"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
-                    )}
                   </button>
                 </li>
               );
