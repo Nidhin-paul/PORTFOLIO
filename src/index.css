@@ -128,6 +128,12 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
 /* Rotating Stamp Animation */
 @keyframes spinSlow {
   from {
