@@ -179,13 +179,20 @@ export const portfolioData = {
     {
       id: "emergency-contact-hub",
       number: "01",
+      category: "DISPATCH & ALERT SYSTEM",
+      themeVariant: "deck-dark",
       title: "Emergency Contact Hub",
-      tagline: "A full-stack platform for emergency contact management with admin dashboard.",
+      tagline: "A mission-critical dispatch and directory platform with real-time alert broadcasting.",
       description: "A mission-critical contact and dispatch directory system designed for rapid access during emergencies. Features secure authentication, real-time alert broadcasting, role-based admin controls, and location-aware directory lookups.",
       tags: ["React", "Node.js", "MongoDB", "Express.js"],
       image: "/images/project-emergency.jpg",
       github: "https://github.com/nidhin-paul/emergency-contact-hub",
       demo: "https://emergency-hub.example.com",
+      metrics: [
+        { label: "Query Speed", val: "< 45ms" },
+        { label: "Uptime Target", val: "99.9%" },
+        { label: "Security", val: "RBAC + JWT" }
+      ],
       highlights: [
         "Role-based access control (Admin, Officer, Dispatcher)",
         "Instant broadcast system with SMS/Push alerts",
@@ -196,13 +203,20 @@ export const portfolioData = {
     {
       id: "expense-tracker",
       number: "02",
+      category: "FINANCIAL ANALYTICS",
+      themeVariant: "deck-light",
       title: "Expense Tracker",
-      tagline: "Track income, expenses and get insights with charts and analytics.",
+      tagline: "Smart personal expenditure analytics with interactive financial charts and budgets.",
       description: "A smart personal finance and expenditure management application that helps users monitor spending habits, set monthly budgets, and visualize financial growth with interactive graphs.",
       tags: ["React", "Node.js", "MongoDB", "Chart.js"],
       image: "/images/project-expense.jpg",
       github: "https://github.com/nidhin-paul/expense-tracker-mern",
       demo: "https://expensetracker.example.com",
+      metrics: [
+        { label: "Visualizations", val: "Chart.js" },
+        { label: "Export Formats", val: "PDF & CSV" },
+        { label: "Data State", val: "Real-time" }
+      ],
       highlights: [
         "Interactive monthly cash flow breakdown and category distribution",
         "Budget threshold warnings and anomaly spending alerts",
@@ -213,13 +227,20 @@ export const portfolioData = {
     {
       id: "vehicle-service-booking",
       number: "03",
+      category: "AUTOMOTIVE BOOKING PORTAL",
+      themeVariant: "deck-accent",
       title: "Vehicle Service Booking",
-      tagline: "Online vehicle service booking platform with user and admin panels.",
+      tagline: "End-to-end automotive service management with multi-stage tracking and admin panels.",
       description: "An intuitive automotive workshop booking management portal. Enables vehicle owners to choose customized maintenance packages, pick real-time calendar slots, and track workshop service statuses.",
       tags: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       image: "/images/project-vehicle.jpg",
       github: "https://github.com/nidhin-paul/vehicle-service-booking",
       demo: "https://vehicleservice.example.com",
+      metrics: [
+        { label: "Live Workflow", val: "4 Stages" },
+        { label: "Availability", val: "Instant Slot" },
+        { label: "Architecture", val: "Full MERN" }
+      ],
       highlights: [
         "Real-time calendar slot availability and instant booking confirmation",
         "Automated service progress tracker (Inspection, Repair, Wash, Ready)",

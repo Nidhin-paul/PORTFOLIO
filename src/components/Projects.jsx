@@ -1,123 +1,84 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function TiltProjectCard({ proj, onSelectProject }) {
-  const cardRef = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -7;
-    const rotateY = ((x - centerX) / centerX) * 7;
-    setTilt({ x: rotateX, y: rotateY });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      className="project-card"
-      onClick={() => onSelectProject(proj)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: tilt.x === 0 && tilt.y === 0 ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
-      }}
-    >
-      {/* Image Preview Box with Horizontal Reveal */}
-      <div className="project-preview-wrapper">
-        <div className="project-image-reveal-curtain">
-          <img
-            src={proj.image}
-            alt={proj.title}
-            className="project-preview-img"
-            loading="lazy"
-          />
-        </div>
-        <span className="project-index-pill">{proj.number}</span>
-      </div>
-
-      {/* Card Meta Content */}
-      <div className="project-info">
-        <h3 className="project-title">{proj.title}</h3>
-        <p className="project-tagline">{proj.tagline}</p>
-
-        {/* Tech Tags and Arrow Action */}
-        <div className="project-tags-row">
-          <div className="project-tags-list">
-            {proj.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className="tag-name">{tag}</span>
-            ))}
-          </div>
-
-          <button
-            className="project-action-btn"
-            aria-label={`View details for ${proj.title}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectProject(proj);
-            }}
-          >
-            <ArrowRight size={15} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+const TILT_CONFIGS = [
+  { defaultRotate: -4.5, defaultOffset: -12, zIndex: 1 },
+  { defaultRotate: 3.5, defaultOffset: 14, zIndex: 2 },
+  { defaultRotate: -2.5, defaultOffset: -8, zIndex: 3 }
+];
 
 export function Projects({ onSelectProject }) {
   const { projects } = portfolioData;
   const sectionRef = useRef(null);
+  const deckRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Horizontal image reveal animation for project cards
-      gsap.fromTo(
-        '.project-image-reveal-curtain',
-        { clipPath: 'inset(0% 100% 0% 0%)' },
-        {
-          clipPath: 'inset(0% 0% 0% 0%)',
-          duration: 1.1,
-          stagger: 0.18,
-          ease: 'power3.inOut',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%'
-          }
-        }
-      );
+      const cards = gsap.utils.toArray('.cascading-deck-card');
+      const mm = gsap.matchMedia();
 
-      gsap.fromTo(
-        '.project-card',
-        { y: 35, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%'
-          }
-        }
-      );
+      // Desktop & Tablet (> 768px): cascading tilt with staggered scroll trigger
+      mm.add('(min-width: 769px)', () => {
+        cards.forEach((card, index) => {
+          const config = TILT_CONFIGS[index % TILT_CONFIGS.length];
+          gsap.fromTo(
+            card,
+            {
+              y: 80,
+              opacity: 0,
+              rotate: 0,
+              scale: 0.94
+            },
+            {
+              y: 0,
+              opacity: 1,
+              rotate: config.defaultRotate,
+              scale: 1,
+              duration: 1,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+                end: 'top 45%',
+                toggleActions: 'play none none reverse'
+              }
+            }
+          );
+        });
+      });
+
+      // Mobile (<= 768px): flat, straight cards (rotate: 0deg) to prevent horizontal overflow
+      mm.add('(max-width: 768px)', () => {
+        cards.forEach((card) => {
+          gsap.fromTo(
+            card,
+            {
+              y: 50,
+              opacity: 0,
+              rotate: 0,
+              scale: 0.97
+            },
+            {
+              y: 0,
+              opacity: 1,
+              rotate: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 88%',
+                toggleActions: 'play none none reverse'
+              }
+            }
+          );
+        });
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -142,27 +103,157 @@ export function Projects({ onSelectProject }) {
 
           <div className="projects-header-right">
             <p className="projects-subtitle">
-              Here are some of the projects I've built using the MERN stack and modern web technologies.
+              Here are some of the full-stack applications I've built using the MERN stack, RESTful APIs, and modern UI engineering.
             </p>
             <button
               onClick={() => onSelectProject(projects[0])}
               className="view-all-projects-btn"
             >
-              <span>View All Projects</span>
+              <span>Explore First Project</span>
               <ArrowUpRight size={15} />
             </button>
           </div>
         </div>
 
-        {/* Projects Cards Grid */}
-        <div className="projects-grid">
-          {projects.map((proj) => (
-            <TiltProjectCard
-              key={proj.id}
-              proj={proj}
-              onSelectProject={onSelectProject}
-            />
-          ))}
+        {/* Cascading Tilted Deck Showcase Layout */}
+        <div className="cascading-deck-container" ref={deckRef}>
+          {projects.map((proj, idx) => {
+            const config = TILT_CONFIGS[idx % TILT_CONFIGS.length];
+            const isDarkCard = proj.themeVariant === 'deck-dark' || proj.themeVariant === 'deck-accent';
+
+            return (
+              <div
+                key={proj.id}
+                className={`cascading-deck-card ${proj.themeVariant} ${isDarkCard ? 'is-dark-theme' : 'is-light-theme'}`}
+                style={{
+                  '--card-tilt': `${config.defaultRotate}deg`,
+                  '--card-offset': `${config.defaultOffset}px`,
+                  '--card-z': config.zIndex,
+                  zIndex: config.zIndex
+                }}
+                onClick={() => onSelectProject(proj)}
+                role="button"
+                tabIndex={0}
+                aria-label={`View case study for ${proj.title}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectProject(proj);
+                  }
+                }}
+              >
+                {/* 1. Card Top Bar Header */}
+                <div className="deck-card-topbar">
+                  <div className="deck-topbar-left">
+                    <span className="deck-index-badge">{proj.number}</span>
+                    <span className="deck-category-text">{proj.category}</span>
+                  </div>
+
+                  {/* Inline Stats / Metrics strip in header */}
+                  {proj.metrics && proj.metrics.length > 0 && (
+                    <div className="deck-topbar-metrics">
+                      {proj.metrics.map((m, mIdx) => (
+                        <div key={mIdx} className="deck-topbar-metric-item">
+                          <span className="deck-topbar-metric-val">{m.val}</span>
+                          <span className="deck-topbar-metric-lbl">{m.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="deck-topbar-right">
+                    <button
+                      className="deck-action-circle-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectProject(proj);
+                      }}
+                      aria-label="Open project modal"
+                    >
+                      <ArrowUpRight size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subtle Divider Rule */}
+                <div className="deck-card-divider"></div>
+
+                {/* 2. Main Card Body: 2-Column Split */}
+                <div className="deck-card-body">
+                  {/* Left Column: Title, Overview, Highlights, Tags, Actions */}
+                  <div className="deck-card-info">
+                    <div className="deck-title-block">
+                      <h3 className="deck-title">{proj.title}</h3>
+                      <p className="deck-tagline">{proj.tagline}</p>
+                    </div>
+
+                    {/* Architecture Highlights */}
+                    {proj.highlights && proj.highlights.length > 0 && (
+                      <ul className="deck-highlights-list">
+                        {proj.highlights.slice(0, 2).map((hl, hIdx) => (
+                          <li key={hIdx}>
+                            <span className="deck-bullet-dot">•</span>
+                            <span className="deck-bullet-text">{hl}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* Tech Stack Pills */}
+                    <div className="deck-tags-row">
+                      {proj.tags.map((tag) => (
+                        <span key={tag} className="deck-tech-pill">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Card Actions */}
+                    <div className="deck-actions-row">
+                      <button
+                        className="pill-btn deck-primary-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectProject(proj);
+                        }}
+                      >
+                        <span>View Details</span>
+                        <ArrowUpRight size={14} />
+                      </button>
+
+                      {proj.demo && (
+                        <a
+                          href={proj.demo}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="deck-secondary-link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span>Live Demo</span>
+                          <ExternalLink size={13} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column: High-Impact Project Preview */}
+                  <div className="deck-card-visual">
+                    <div className="deck-image-frame">
+                      <img
+                        src={proj.image}
+                        alt={proj.title}
+                        className="deck-preview-img"
+                        loading="lazy"
+                      />
+                      <div className="deck-image-overlay"></div>
+                      <span className="deck-corner-badge">FULL-STACK</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            );
+          })}
         </div>
 
       </div>
